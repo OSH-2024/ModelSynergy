@@ -1,0 +1,3 @@
+[submodule "InfLLM"]
+	path = InfLLM
+	url = https://github.com/00ffcc/InfLLM.git
