@@ -59,3 +59,7 @@
 
 5.19：修改了`InfLLM`代码，现在可以支持保存`kvcache`到文件，并从文件中读取`kvcache`
 
+> 仓库中含有子模块，可使用以下命令更新
+> `git submodule update --init --recursive`
+
+
