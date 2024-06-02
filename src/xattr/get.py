@@ -1,7 +1,7 @@
 # Time: 2024/5/30/9:50
 # Auth: YangJiahe
-# Desc: 设置文件的扩展属性 还未完成(判断文件是否存在与读权限)
-# version: 1.0
+# Desc: 设置文件的扩展属性
+# version: 1.1
 
 # @param file_path 文件路径
 # @param attr_name 属性名
