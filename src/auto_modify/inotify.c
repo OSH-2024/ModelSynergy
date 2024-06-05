@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
     int length, i = 0;
     int fd;
     char buffer[BUF_LEN];  // inotify事件缓冲区
-    char root_path[MAX_PATH_LENGTH] = ROOT_PATH;
     char *path;
 
     fd = inotify_init(); // 初始化inotify
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
     }
 
     wd_to_path = g_hash_table_new(g_direct_hash, g_direct_equal); // 创建哈希表
-    add_watch_recursively(fd, root_path);
+    add_watch_recursively(fd, ROOT_PATH);
 
     while (1) {
         i = 0;
