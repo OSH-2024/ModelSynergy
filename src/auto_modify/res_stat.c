@@ -7,7 +7,6 @@
 #define MAX_BUF 1024
 #define MAX_CPU 10.0  // 后续测试后调整到合适值
 #define MAX_MEM 10.0
-#define MAX_GPU 10.0
 
 double get_cpu_usage() {  // CPU
     FILE* fp;
@@ -54,33 +53,15 @@ double get_mem_usage() {  // 内存
     return (double)(total_mem - free_mem) / total_mem * 100;
 }
 
-double get_gpu_usage() {  // GPU
-    // 当前程序限定为Intel GPU，且需要安装intel_gpu_top
-    // 尚未测试
-
-    FILE* fp;
-    char buf[MAX_BUF];
-    char* match;
-    int render_usage;
-
-    fp = popen("intel_gpu_top -s1 -o- | grep render", "r");
-    fgets(buf, MAX_BUF, fp);
-    pclose(fp);
-
-    match = strstr(buf, "render busy:");
-    sscanf(match, "render busy: %d%%", &render_usage);
-
-    return (double)render_usage;
-}
+// GPU部分后续配置NVIDIA-SMI命令行工具后完成
 
 int main() {
     double cpu_usage = get_cpu_usage();
     double mem_usage = get_mem_usage();
 
-    if(cpu_usage < MAX_CPU && mem_usage < MAX_MEM && gpu_usage < MAX_GPU) {
+    if(cpu_usage < MAX_CPU && mem_usage < MAX_MEM) {
         printf("CPU usage: %.2f%%\n", cpu_usage);
         printf("Memory usage: %.2f%%\n", mem_usage);
-        //printf("GPU usage: %.2f%%\n", gpu_usage);
         return 1;
     }
 
