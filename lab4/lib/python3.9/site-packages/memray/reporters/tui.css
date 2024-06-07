@@ -1,0 +1,104 @@
+TUI {
+  layout: vertical;
+}
+
+#head {
+  layout: horizontal;
+  height: 1;
+}
+
+#head_time_display {
+  width: 30;
+  text-align: right;
+  dock: right;
+}
+
+Header {
+  height: 7;
+}
+
+.narrow Header {
+  height: 11;
+}
+
+#header_container {
+  layout: horizontal;
+}
+
+.narrow #header_container {
+  layout: vertical;
+}
+
+#header_metadata {
+  layout: vertical;
+  width: 100%;
+  height: 7;
+  border: blank;
+  border-title-align: right;
+  border-title-color: $success-lighten-1;
+  overflow: auto auto;
+}
+
+.narrow #header_metadata {
+  border: none;
+  height: 5;
+}
+
+#header_metadata_grid {
+  layout: grid;
+  height: 3;
+  width: auto;
+  grid-size: 2;
+  grid-columns: auto auto;
+  grid-gutter: 0 3;
+  overflow: hidden hidden;
+}
+
+#header_metadata > #status_message {
+  column-span: 2;
+  width: auto;
+  height: 1;
+}
+
+MemoryGraph {
+  dock: right;
+  border: round $success-lighten-1;
+  box-sizing: content-box;
+  height: 4;
+  max-width: 50;
+}
+
+#memory_graph_container {
+  dock: right;
+  box-sizing: content-box;
+  width: 30%;
+  max-width: 52;
+}
+
+.narrow #memory_graph_container {
+  dock: bottom;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  height: 6;
+}
+
+Footer {
+  background: transparent;
+}
+
+Footer > .footer--key {
+  background: rgb(30, 144, 255);
+}
+
+AllocationTable {
+  height: 1fr;
+}
+
+.narrow AllocationTable {
+  height: 100%;
+}
+
+AllocationTable > ScrollView {
+  height: 100%;
+}

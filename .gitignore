@@ -1,2 +1,13 @@
 linux-6.9.2
 src/auto_modify/test
+Lab4/bin
+Lab4/ILSVRC2012_devkit_t12
+Lab4/include
+Lab4/lib
+Lab4/lib64
+Lab4/pyvenv.cfg
+Lab4/ray.md
+Lab4/ray/_ray_output
+Lab4/ray/_serial_output
+Lab4/ray/generated_images
+Lab4/ray/images
