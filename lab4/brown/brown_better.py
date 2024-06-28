@@ -27,20 +27,30 @@ def compute_segment_batch(start_value, sigma, dt, increments_batches):
 @ray.remote
 def solve_sde_batch(sigma, A0, dt, T, num_steps, num_segments, batch_size):
     segment_length = num_steps // num_segments
-    futures = []
+    # 并行生成所有段的布朗运动增量
+    increments_futures = [brownian_increments_batch.remote(segment_length - 1, dt, batch_size) for _ in range(num_segments)]
+    # 一次性获取所有增量，确保所有增量计算都已完成
+    increments_batches = ray.get(increments_futures)
+
+    segment_futures = []
     start_value = A0
-    for i in range(num_segments):
-        # 计算每个段起始和结束的索引
-        start_index = i * segment_length
-        end_index = start_index + segment_length if i < num_segments - 1 else num_steps
-        # 计算每个段的增量和结果
-        increments_future = brownian_increments_batch.remote(end_index - start_index - 1, dt, batch_size)
-        segment_future = compute_segment_batch.remote(start_value, sigma, dt, ray.get(increments_future))
-        start_value = ray.get(segment_future)[-1] # 更新下一段的起始值
-        futures.append(segment_future)
-    
-    segments = ray.get(futures)
-    return np.concatenate([[A0], *segments])  # 将所有段的结果合并
+    for increments_batch in increments_batches:
+        # 使用预先计算的增量进行段计算
+        segment_future = compute_segment_batch.remote(start_value, sigma, dt, increments_batch)
+        # 异步获取结果以更新start_value，但不阻塞循环
+        segment_futures.append(segment_future)
+
+    # 等待所有段计算完成
+    for i, future in enumerate(segment_futures):
+        if i == 0:
+            segments = [ray.get(future)]
+        else:
+            # 更新start_value为前一个段的最后一个值
+            start_value = segments[-1][-1]
+            # 使用更新后的start_value重新计算当前段
+            segments.append(ray.get(compute_segment_batch.remote(start_value, sigma, dt, increments_batches[i])))
+
+    return np.concatenate([[A0], *segments])
 
 def main():
     ray.init(address="auto")
@@ -51,32 +61,32 @@ def main():
     sigma = 0.2
     A0 = 1.0
     T = 1.0
-    num_steps = 10000000
+    num_steps = 1000000
     dt = T / num_steps
 
     num_segments = 10 # 段数
-    batch_size = num_steps // 100 # 批处理大小
+    batch_size = num_steps // 10 # 批处理大小
     futures = [solve_sde_batch.remote(sigma, A0, dt, T, num_steps, num_segments, batch_size) for _ in range(10)]
 
     results = ray.get(futures)
 
-    # # 绘制每个SDE解的图像
-    # for i, result in enumerate(results):
-    #     plt.plot(result, label=f"Simulation {i+1}")
-    
-    # # 结束时间
-    # end_time = time.time()
-
-    # plt.xlabel("Time Steps")
-    # plt.ylabel("Value")
-    # plt.title("SDE Simulations")
-    # plt.legend()
-    # # 保存图像到文件
-    # plt.savefig("sde_ray.png", dpi=300)  # 指定文件名和分辨率
-
-    # print(f"Time taken: {end_time - start_time} seconds")
+    # 结束时间
+    end_time = time.time()
 
     ray.shutdown()
+
+    # 绘制每个SDE解的图像
+    for i, result in enumerate(results):
+        plt.plot(result, label=f"Simulation {i+1}")
+
+    plt.xlabel("Time Steps")
+    plt.ylabel("Value")
+    plt.title("SDE Simulations")
+    plt.legend()
+    # 保存图像到文件
+    plt.savefig("sde_ray.png", dpi=300)  # 指定文件名和分辨率
+
+    print(f"Time taken: {end_time - start_time} seconds")
 
 # 主程序
 if __name__ == "__main__":
