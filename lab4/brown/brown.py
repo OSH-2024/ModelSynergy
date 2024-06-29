@@ -3,6 +3,7 @@ import ray
 import matplotlib.pyplot as plt  # 导入matplotlib
 import os
 import time
+import psutil
 
 @ray.remote
 def brownian_increment(num_steps, dt, batch_size):
@@ -32,7 +33,7 @@ def main():
     A0 = 1.0
     T = 1.0
     num_steps = 1000000
-    batch_size = 10000 # 批处理大小
+    batch_size = num_steps // 5 # 批处理大小
     dt = T / num_steps
 
     futures = [solve_sde.remote(sigma, A0, dt, T, num_steps, batch_size) for _ in range(10)]
@@ -41,6 +42,7 @@ def main():
 
     # 结束时间
     end_time = time.time()
+    ray.shutdown()
 
     # 绘制每个SDE解的图像
     for i, result in enumerate(results):
@@ -55,7 +57,6 @@ def main():
 
     print(f"Time taken: {end_time - start_time} seconds")
 
-    ray.shutdown()
 
 # 主程序
 if __name__ == "__main__":
