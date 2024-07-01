@@ -1,10 +1,11 @@
 linux-6.9.2
 src/auto_modify/test
 lab4/bin/
-lab4/lib/
-lab4/lib64/
+lab4/lib
+lab4/lib64
 lab4/pyvenv.cfg
 lab4/ray.md
 lab4/ray/
 lab4/brown/*.png
 lab4/brown/brown_better.py
+lab4/.vscode
