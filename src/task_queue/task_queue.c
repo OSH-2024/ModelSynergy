@@ -1,68 +1,41 @@
-// Time: 2024/6/2 21:40
+// Time: 2024/7/2
 // Auth: YangJiahe
 // Desc: 任务队列，向消息队列中添加消息(待处理的文件路径)，然后从消息队列中接收消息
-// version: 1.0 未完成
+// version: 2.0 未完成
+// 使用方法：
 
+// message_queue.c
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <mqueue.h>
 #include <string.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <sys/types.h>
+#include <unistd.h>
 
-// 最大文本长度
-#define MAX_TEXT 1024
+#define QUEUE_NAME "/task_queue"
+#define MAX_MSG_SIZE 4096
+#define MAX_MSG_NUM 10
+#define MSG_STOP "exit"
 
-// 消息结构体
-struct message {
-    long message_type;
-    char text[MAX_TEXT];
-};
+// 创建消息队列
+void mq_create() {
+    mqd_t mq; // 消息队列描述符
+    // 创建消息队列结构体
+    struct mq_attr attr;
 
-int main() {
-    int running = 1;
-    struct message some_message;
-    int msgid;
-    char buffer[BUFSIZ];
+    // 初始化消息队列属性
+    // 在阻塞模式下创建消息队列
+    // 当一个进程尝试向已满的消息队列发送消息或者从空的消息队列读，该线程将会被阻塞
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = MAX_MSG_NUM;
+    attr.mq_msgsize = MAX_MSG_SIZE;
+    attr.mq_curmsgs = 0; // 当前消息队列中的消息数，有系统维护，当前设置为0
 
-    // 创建消息队列
-    msgid = msgget((key_t)1234, 0666 | IPC_CREAT);
-
-    if (msgid == -1) {
-        fprintf(stderr, "msgget failed\n");
-        exit(EXIT_FAILURE);
+    // 创建消息队列并以只读模式打开
+    mq = mq_open(QUEUE_NAME, O_CREAT | O_RDONLY, 0644, &attr);
+    if (mq == (mqd_t) -1) {
+        perror("mq_create");
+        exit(1);
     }
-
-    // 向消息队列中添加消息
-    while (running) {
-        printf("Enter file path: ");
-        fgets(buffer, BUFSIZ, stdin);
-        some_message.message_type = 1;
-        strcpy(some_message.text, buffer);
-
-        if (msgsnd(msgid, (void *)&some_message, MAX_TEXT, 0) == -1) {
-            fprintf(stderr, "msgsnd failed\n");
-            exit(EXIT_FAILURE);
-        }
-
-        if (strncmp(buffer, "end", 3) == 0) {
-            running = 0;
-        }
-    }
-
-    // 从消息队列中接收消息
-    if (msgrcv(msgid, (void *)&some_message, BUFSIZ, 0, 0) == -1) {
-        fprintf(stderr, "msgrcv failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("You wrote: %s", some_message.text);
-
-    // 删除消息队列
-    if (msgctl(msgid, IPC_RMID, 0) == -1) {
-        fprintf(stderr, "msgctl(IPC_RMID) failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    exit(EXIT_SUCCESS);
 }
