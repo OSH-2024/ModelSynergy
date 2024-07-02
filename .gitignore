@@ -9,3 +9,5 @@ lab4/ray/
 lab4/brown/*.png
 lab4/brown/brown_better.py
 lab4/.vscode
+src/task_queue/test_sys.c
+src/task_queue/test.py

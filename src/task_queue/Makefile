@@ -7,7 +7,7 @@ TARGET = test
 all: $(TARGET)
 
 $(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET) -lrt
 
 clean:
 	rm -f $(TARGET)
