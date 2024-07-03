@@ -1,7 +1,7 @@
 # Time: 2024/6/2 16:00
 # Auth: YangJiahe
 # Desc: 设置文件的扩展属性 还未完成(判断是否已经有该属性)
-# version: 1.0
+# version: 1.1
 
 # @param file_path 文件路径
 # @param attr_name 属性名
@@ -13,7 +13,7 @@ import stat
 
 def set_xattr(file_path, attr_name, attr_value):
     try:
-        xattr.set(file_path, attr_name, attr_value)
+        xattr.setxattr(file_path, attr_name, attr_value)
         return True
     # 捕获所有异常
     except Exception as e:
@@ -21,7 +21,7 @@ def set_xattr(file_path, attr_name, attr_value):
             # 当文件系统不支持扩展属性时，会抛出OSError异常，错误码为95即OperationNotSupportedError
             print(f"Error setting attribute: {e}")
             print("Operation not supported on the filesystem")
-        elif e.errno == 1:
+        elif e.errno == 2:
             # 当文件不存在时，会抛出OSError异常，错误码为1即FileNotFoundError
             print(f"Error setting attribute: {e}")
             print("No such file or directory")

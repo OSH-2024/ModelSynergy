@@ -11,10 +11,10 @@ import os
 import stat
 
 def get_xattr(file_path, attr_name):
-    # try:尝试获取文件扩展属性，当文件不存在该属性时，会抛出KeyError异常
+    # try:尝试获取文件扩展属性，当文件不存在该属性时，会抛出KeyError异常，并放回false, None
     try:
         # 获取文件的扩展属性
-        value = xattr.get(file_path, attr_name)
+        value = xattr.getxattr(file_path, attr_name)
         # 返回True和属性值
         return True, value
     except Exception as e:
@@ -22,7 +22,7 @@ def get_xattr(file_path, attr_name):
             # 当文件系统不支持扩展属性时，会抛出OSError异常，错误码为95即OperationNotSupportedError
             print(f"Error getting attribute: {e}")
             print("Operation not supported on the filesystem")
-        elif e.errno == 1:
+        elif e.errno == 2:
             # 当文件不存在时，会抛出OSError异常，错误码为1即FileNotFoundError
             print(f"Error getting attribute: {e}")
             print("No such file or directory")
