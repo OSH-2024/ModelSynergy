@@ -2,7 +2,7 @@ import subprocess
 import sys
 import os
 import mimetypes
-from . import set
+from .set import set_xattr
 
 def store_command(file_path, kv_cache_path):
 
@@ -15,7 +15,7 @@ def store_command(file_path, kv_cache_path):
     ]
 
     # 设置扩展属性
-    set.set_xattr(file_path, "kv_cache_path", kv_cache_path.encode())
+    set_xattr(file_path, "kv_cache_path", kv_cache_path.encode())
     print("hadioas")
     # 调用命令
     result = subprocess.run(command, capture_output=True, text=True)
