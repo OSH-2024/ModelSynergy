@@ -35,18 +35,6 @@ def load_command(file_path):
     os.system(command)
     print("chat finished")
 
-
-def process_directory(directory, kv_cache_path):
-    for entry in os.scandir(directory):
-        if entry.is_file():
-            mime_type, _ = mimetypes.guess_type(entry.path)
-            if mime_type and mime_type.startswith('text/'):
-                store_command(entry.path, kv_cache_path)
-            else:
-                print(f"Warning: The file '{entry.path}' is not a text file and will be skipped.")
-        elif entry.is_dir():
-            process_directory(entry.path, kv_cache_path)
-
 def main():
     if sys.argv[1] == "--store" or sys.argv[1] == "-s":
         if len(sys.argv) != 4:
@@ -62,8 +50,8 @@ def main():
                 store_command(file_path, kv_cache_path)
             else:
                 print(f"Error: The file '{file_path}' is not a text file.")
-        elif os.path.isdir(file_path):
-            process_directory(file_path, kv_cache_path)
+        else:
+            print(f"Error: The file '{file_path}' does not exist.")
     elif sys.argv[1] == "--load" or sys.argv[1] == "-l":
         if len(sys.argv) != 3:
             print("Usage: ModelSynergy --load <file-path>")
