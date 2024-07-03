@@ -1,7 +1,7 @@
 linux-6.9.2
 src/auto_modify/test
 lab4/bin/
-lab4/lib/
+lab4/lib
 lab4/lib64
 lab4/pyvenv.cfg
 lab4/ray.md
@@ -13,3 +13,6 @@ src/model_synergy.egg-info/
 src/model_synergy/__pycache__/
 src/xattr/__pycache__/
 src/xattr.egg-info/
+lab4/.vscode
+src/task_queue/test_sys.c
+src/task_queue/test.py
