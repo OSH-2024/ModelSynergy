@@ -17,6 +17,7 @@ def store_command(file_path, kv_cache_path):
 
     # 设置扩展属性
     set_xattr(file_path, "user.kvcache", kv_cache_path.encode())
+    print("set_over")
 
     # 调用命令
     result = subprocess.run(command, capture_output=True, text=True)
