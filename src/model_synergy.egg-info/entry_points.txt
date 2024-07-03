@@ -1,2 +1,0 @@
-[console_scripts]
-ModelSynergy = model_synergy.control:main
