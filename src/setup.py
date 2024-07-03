@@ -12,11 +12,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='modelsynergy',
-    version='0.7',
+    version='1.0',
     packages=find_packages(),
     install_requires=[
-        'xattr',
-        'pyxattr',
+        'xattr==1.1.0',
+        'pyxattr==0.8.1',
     ],
     entry_points={
         'console_scripts': [
