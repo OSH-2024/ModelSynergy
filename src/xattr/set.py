@@ -7,20 +7,27 @@
 # @param attr_name 属性名
 # @param attr_value 属性值 为bytes类型
 
-import xattr
+import ctypes
 import os
 import stat
+from ctypes import c_char_p, c_void_p, c_size_t, c_int
 
-def set_xattr(file_path, attr_name, attr_value):
+libc = ctypes.CDLL('libc.so.6', use_errno=True)
+libc.setxattr.argtypes = [c_char_p, c_char_p, c_void_p, c_size_t, c_int]
+libc.setxattr.restype = c_int
+
+def set_file_xattr(path, name, value):
+
+    path_bytes = path.encode('utf-8')
+    name_bytes = name.encode('utf-8')
+    value_bytes = value.encode('utf-8')
+    
     try:
-        xattr.set(file_path, attr_name, attr_value)
+        libc.setxattr(path_bytes, name_bytes, value_bytes, len(value_bytes), 0)
         return True
-    # 捕获所有异常
-    except Exception as e:
+    except OSError as e:  # 特别捕获OSError
         if e.errno == 95:
-            # 当文件系统不支持扩展属性时，会抛出OSError异常，错误码为95即OperationNotSupportedError
             print(f"Error setting attribute: {e}")
-            print("Operation not supported on the filesystem")
         elif e.errno == 1:
             # 当文件不存在时，会抛出OSError异常，错误码为1即FileNotFoundError
             print(f"Error setting attribute: {e}")
@@ -28,23 +35,19 @@ def set_xattr(file_path, attr_name, attr_value):
         elif e.errno == 13:
             # 当没有权限时，会抛出OSError异常，错误码为13即PermissionError
             # 获取当前的权限
-            current_permissions = stat.S_IMODE(os.lstat(file_path).st_mode)
+            # current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
             # 添加写权限
-            os.chmod(file_path, current_permissions | stat.S_IWUSR)
+            # os.chmod(path, current_permissions | stat.S_IWUSR)
             # 重新设置属性
-            try:
-                xattr.set(file_path, attr_name, attr_value)
-                return True
-            except Exception as e:
-                print(f"Error setting attribute: {e}")
-                return False
+            # try:
+            #     set_file_xattr(path, name, value)
+            #     return True
+            # except Exception as e:
+            #     print(f"Error setting attribute: {e}")
+            #     return False
+            print(f"Permission denied: {e}")
         return False
 
-# # Example
-# file_path = 'path_to_your_file'
-# associated_file_path = 'path_to_associated_file'
-# attr_name = 'user.my_attr'
+if __name__ == "__main__":
+    set_file_xattr("/home/qsqsdac/test/abc.txt", "kv_cache_path", "/home/qsqsdac/test/1.txt")
 
-# # 将关联文件的路径设置为扩展属性的值
-# # 注意：需要将字符串转换为bytes类型，使用encode()方法
-# set_xattr(file_path, attr_name, associated_file_path.encode())

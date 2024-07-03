@@ -8,3 +8,8 @@ lab4/ray.md
 lab4/ray/
 lab4/brown/*.png
 lab4/brown/brown_better.py
+src/build/
+src/model_synergy.egg-info/
+src/model_synergy/__pycache__/
+src/xattr/__pycache__/
+src/xattr.egg-info/
