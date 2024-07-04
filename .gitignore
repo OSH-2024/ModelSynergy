@@ -19,3 +19,5 @@ src/task_queue/test.py
 src/auto_modify/testbg.py
 src/xattr/test.py
 src/dist
+src/auto_modify/test.*
+src/auto_modify/te
