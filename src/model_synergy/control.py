@@ -61,6 +61,7 @@ def main():
                 print(f"Error: The file '{file_path}' is not a text file.")
         else:
             print(f"Error: The file '{file_path}' does not exist.")
+            
     elif sys.argv[1] == "--load" or sys.argv[1] == "-l":
         if len(sys.argv) != 3:
             print("Usage: ModelSynergy --load <file-path>")
@@ -76,6 +77,7 @@ def main():
                 print(f"Error: The file '{file_path}' is not a text file.")
         elif os.path.isdir(file_path):
             print(f"Error: The file '{file_path}' is a directory.")
+
     elif sys.argv[1] == "--watch" or sys.argv[1] == "-w":
         if len(sys.argv) != 3:
             print("Usage: ModelSynergy --watch <dir-path>")
@@ -85,5 +87,13 @@ def main():
 
         if os.path.isdir(dir_path):
             watch_command(dir_path)
+            os.system('./trans')
+            print("trans added")
         else:
             print(f"Error: The directory '{dir_path}' does not exist.")
+
+    elif sys.argv[1] == "--free" or sys.argv[1] == "-f":
+        os.system("./kill_watch.sh watch")
+        print("watch removed")
+        os.system("./kill_watch.sh trans")
+        print("trans removed")

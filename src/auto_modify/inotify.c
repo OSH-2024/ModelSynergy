@@ -9,16 +9,22 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/inotify.h>
+#include <stdbool.h>
 
 #define EVENT_SIZE  (sizeof(struct inotify_event))
-#define BUF_LEN     (1024 * (EVENT_SIZE + 16))
-#define MAX_PATH_LENGTH 1024
+#define BUF_LEN     (4096 * (EVENT_SIZE + 16))
+#define MAX_PATH_LENGTH 4096
+#define DEBOUNCE_INTERVAL 0.28 // 事件去抖时间
 
 // 进程运行时新创建的目录下文件无法监控，重新运行程序即可监控
 
-GHashTable *wd_to_path; // 监视描述符到目录的映射
+GHashTable *wd_to_path; // 哈希表，监视描述符到目录路径的映射
+GHashTable *file_event_times; // 哈希表，文件名到事件时间的映射
 
-void add_watch_recursively(int fd, const char *dir_name) {  // 递归遍历目录树，添加监控
+extern void se_msg(char *msg, int flag);
+
+// 递归遍历目录树，添加监控
+void add_watch_recursively(int fd, const char *dir_name) {  
     DIR *dir = opendir(dir_name); // 打开根目录
     if (dir == NULL) {
         perror("opendir");
@@ -51,6 +57,29 @@ void handle_exit(int sig) {
     exit(0);
 }
 
+// 检查事件是否应该被忽略
+// 返回1表示忽略，0表示不忽略
+bool debounce_event(const char *filename) {
+    time_t current_time = time(NULL);
+    time_t *last_time_ptr = (time_t *)g_hash_table_lookup(file_event_times, filename);
+
+    if (last_time_ptr != NULL) {
+        // 如果时间差小于阈值，则忽略此事件
+        if (difftime(current_time, *last_time_ptr) < DEBOUNCE_INTERVAL) {
+            return true; // 忽略
+        }
+    }
+
+    // 更新记录的时间
+    if (last_time_ptr == NULL) {
+        last_time_ptr = malloc(sizeof(time_t));
+        g_hash_table_insert(file_event_times, strdup(filename), last_time_ptr);
+    }
+    *last_time_ptr = current_time;
+
+    return false; // 不忽略
+}
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <dir>\n", argv[0]);
@@ -78,6 +107,8 @@ int main(int argc, char **argv) {
     }
 
     wd_to_path = g_hash_table_new(g_direct_hash, g_direct_equal); // 创建哈希表
+    file_event_times = g_hash_table_new(g_str_hash, g_str_equal);
+    // 递归添加监控
     add_watch_recursively(fd, argv[1]);
 
     while (1) {
@@ -93,17 +124,29 @@ int main(int argc, char **argv) {
             if (event->len) { // 文件名不为空
                 if (i + EVENT_SIZE > length)
                     break;
-                else if (event->mask & IN_MODIFY) { // 文件被修改
-                    if (!(event->mask & IN_ISDIR)) { // 不是目录
-                        path = g_hash_table_lookup(wd_to_path, GINT_TO_POINTER(event->wd));
-                        printf("The file %s/%s was modified.\n", path, event->name);
+                else if (event->mask & IN_MODIFY) {
+                    // 文件被修改
+                    if (!debounce_event(event->name)) {
+                        // 时间阈值外，不是同一个事件，可以处理
+                        if (!(event->mask & IN_ISDIR)) {
+                            // 不是目录
+                            path = g_hash_table_lookup(wd_to_path, GINT_TO_POINTER(event->wd));
+                            // 计算所需的缓冲区大小
+                            int size = snprintf(NULL, 0, "%s/%s", path, event->name) + 1;
+                            // 分配缓冲区
+                            char *combined = (char *)malloc(size*sizeof(char));
+                            // 将path和event->name合并到缓冲区
+                            snprintf(combined, size, "%s/%s", path, event->name);
+                            se_msg(combined, 0);
+                            printf("The file %s was modified.\n", combined);
+                            free(combined);
+                        }
                     }
                 }
-            }
-            i += EVENT_SIZE + event->len;
-        } 
+                i += EVENT_SIZE + event->len;
+            } 
+        }
     }
-    
     close(fd);
     return 0;
 }
