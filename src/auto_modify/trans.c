@@ -12,7 +12,6 @@ int main() {
     while(1) {
         //读取消息队列
         re_msg(file_path);
-        printf("receive path : %s\n",file_path);
 
         //读取扩展属性
         if(get_xattr(file_path, "user.kvcache", kv_cache_path, 4096) != 0) {
