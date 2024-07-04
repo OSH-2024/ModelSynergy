@@ -7,7 +7,7 @@ all: watch trans
 watch: inotify.c ../task_queue/send.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-trans: trans.c ../task_queue/receive.c
+trans: trans.c ../task_queue/receive.c getxattr.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:

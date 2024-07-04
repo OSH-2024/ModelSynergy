@@ -5,8 +5,8 @@ extern void re_msg(char *msg);
 extern int get_xattr(const char *file_path, const char *attr_name, char *value, ssize_t size);
 
 int main() {
-    char command[8192];
-    char file[4096];
+    char command[9000];
+    char file_path[4096];
     char kv_cache_path[4096];
 
     while(1) {
