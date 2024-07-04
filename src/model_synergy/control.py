@@ -28,9 +28,11 @@ def store_command(file_path, kv_cache_path):
 
 
 def watch_command(dir_path):
-    command = f"./watch {dir_path} &"
+    command = f"/usr/local/bin/watch {dir_path} &"
     os.system(command)
     print("watch added")
+    os.system('/usr/local/bin/trans &')
+    print("trans added")
 
 
 def load_command(file_path):
@@ -87,13 +89,11 @@ def main():
 
         if os.path.isdir(dir_path):
             watch_command(dir_path)
-            os.system('./trans')
-            print("trans added")
         else:
             print(f"Error: The directory '{dir_path}' does not exist.")
 
     elif sys.argv[1] == "--free" or sys.argv[1] == "-f":
-        os.system("./kill_watch.sh watch")
+        os.system("/usr/local/bin/kill_watch.sh watch")
         print("watch removed")
-        os.system("./kill_watch.sh trans")
+        os.system("/usr/local/bin//kill_watch.sh trans")
         print("trans removed")
