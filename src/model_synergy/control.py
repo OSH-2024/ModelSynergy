@@ -10,7 +10,7 @@ def store_command(file_path, kv_cache_path):
     command = [
         "python", "-m", "inf_llm.gen",
         "--model-path", "Qwen/Qwen1.5-0.5B-Chat",
-        "--inf-llm-config-path", "config/qwen0b5-inf-llm.yaml",
+        "--inf-llm-config-path", "/home/aistudio/InfLLM/config/qwen-inf-llm.yaml",
         "--prompt-file", file_path,  # 使用参数file_path
         "--store-kv-cache-file", kv_cache_path  # 使用参数kv_cache_path
     ]
@@ -23,8 +23,8 @@ def store_command(file_path, kv_cache_path):
     result = subprocess.run(command, capture_output=True, text=True)
 
     # 打印命令的输出
-    # print("STDOUT:", result.stdout)
-    # print("STDERR:", result.stderr)
+    print("STDOUT:", result.stdout)
+    print("STDERR:", result.stderr)
 
 
 def watch_command(dir_path):
@@ -35,10 +35,11 @@ def watch_command(dir_path):
 
 def load_command(file_path):
     has_attr, kvcache_path = get_xattr(file_path, 'user.kvcache')
+    kvcache_path = kvcache_path.decode('utf-8')
     if not has_attr:
         print("Error: The file does not have the attribute 'user.kvcache'.")
         return
-    command = f"python -m inf_llm.chat --model-path Qwen/Qwen1.5-0.5B-Chat --inf-llm-config-path config/qwen0b5-inf-llm.yaml --load-kv-cache-file {kvcache_path}"
+    command = f"python -m inf_llm.chat --model-path Qwen/Qwen1.5-0.5B-Chat --inf-llm-config-path /home/aistudio/InfLLM/config/qwen-inf-llm.yaml --load-kv-cache-file {kvcache_path}"
 
     os.system(command)
     print("chat finished")
