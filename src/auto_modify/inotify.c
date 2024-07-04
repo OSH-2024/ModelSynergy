@@ -9,15 +9,16 @@
 #include <sys/types.h>
 #include <sys/inotify.h>
 
-#define EVENT_SIZE  (sizeof(struct inotify_event))
-#define BUF_LEN     (1024 * (EVENT_SIZE + 16))
-#define MAX_PATH_LENGTH 1024
-#define ROOT_PATH   "/home/qsqsdac/test"   // 监控的根目录
+#define EVENT_SIZE  (sizeof(struct inotify_event))  // inotify事件结构体大小
+#define BUF_LEN     (1024 * (EVENT_SIZE + 16))      // inotify事件缓冲区大小
+#define MAX_PATH_LENGTH 4096                        // 最大路径长度
+#define ROOT_PATH   "/home/qsqsdac/test"            // 监控的根目录
 // 进程运行时新创建的目录下文件无法监控，重新运行程序即可监控
 
-GHashTable *wd_to_path; // 监视描述符到目录的映射
+GHashTable *wd_to_path; // 哈希表，监视描述符到目录路径的映射
 
-void add_watch_recursively(int fd, const char *dir_name) {  // 递归遍历目录树，添加监控
+// 递归遍历目录树，添加监控
+void add_watch_recursively(int fd, const char *dir_name) {  
     DIR *dir = opendir(dir_name); // 打开根目录
     if (dir == NULL) {
         perror("opendir");
