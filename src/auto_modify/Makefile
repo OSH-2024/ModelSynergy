@@ -2,10 +2,13 @@ CC = gcc
 CFLAGS = $(shell pkg-config --cflags glib-2.0) -Wall -g
 LIBS = $(shell pkg-config --libs glib-2.0)
 
-all: test
+all: watch trans
 
-test: inotify.c getxattr.c
-	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
+watch: inotify.c ../task_queue/send.c
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+trans: trans.c ../task_queue/receive.c
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -f test
+	rm -f watch trans
