@@ -24,7 +24,7 @@ int get_xattr(const char *file_path, const char *attr_name, char *value, ssize_t
                 return ENOTSUP;
             // 文件不存在
             case ENOENT:
-                printf("Error getting attribute: No such file or directory\n");
+                printf("Error getting attribute: No such file or directory\n %s", file_path);
                 return ENOENT;
             // 权限不足
             case EACCES:

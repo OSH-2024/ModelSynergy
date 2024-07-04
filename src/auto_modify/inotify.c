@@ -138,6 +138,7 @@ int main(int argc, char **argv) {
                             char *combined = (char *)malloc(size*sizeof(char));
                             // 将path和event->name合并到缓冲区
                             snprintf(combined, size, "%s/%s", path, event->name);
+                            combined[size-1] = '\0'; // 保证字符串结尾为'\0'
                             se_msg(combined, 0);
                             printf("The file %s was modified.\n", combined);
                             free(combined);
