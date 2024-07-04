@@ -14,8 +14,10 @@ int main() {
         re_msg(file_path);
 
         //读取扩展属性
-        if(get_xattr(file_path, "user.kvcache", kv_cache_path, 4096) == -1)
+        if(get_xattr(file_path, "user.kvcache", kv_cache_path, 4096) == -1) {
+            printf("%s does not have kvcache\n", file_path);
             continue;
+        }
 
         // 使用sprintf构建命令字符串
         sprintf(command, "python -m inf_llm.gen --model-path " \
