@@ -21,6 +21,8 @@
 GHashTable *wd_to_path; // 哈希表，监视描述符到目录路径的映射
 GHashTable *file_event_times; // 哈希表，文件名到事件时间的映射
 
+extern void se_msg(char *msg, int flag);
+
 // 递归遍历目录树，添加监控
 void add_watch_recursively(int fd, const char *dir_name) {  
     DIR *dir = opendir(dir_name); // 打开根目录
@@ -129,7 +131,15 @@ int main(int argc, char **argv) {
                         if (!(event->mask & IN_ISDIR)) {
                             // 不是目录
                             path = g_hash_table_lookup(wd_to_path, GINT_TO_POINTER(event->wd));
-                            printf("The file %s/%s was modified.\n", path, event->name);
+                            // 计算所需的缓冲区大小
+                            int size = snprintf(NULL, 0, "%s/%s", path, event->name) + 1;
+                            // 分配缓冲区
+                            char *combined = (char *)malloc(size*sizeof(char));
+                            // 将path和event->name合并到缓冲区
+                            snprintf(combined, size, "%s/%s", path, event->name);
+                            se_msg(combined, 0);
+                            printf("The file %s was modified.\n", combined);
+                            free(combined);
                         }
                     }
                 }
