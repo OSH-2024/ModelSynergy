@@ -19,7 +19,7 @@ void re_msg(char *msg) {
     // 打开消息队列
     mq = mq_open(queue_name, O_RDONLY);
     if (mq == (mqd_t) -1) {
-        perror("mq_open");
+        perror("mq_open_re");
         exit(1);
     }
 

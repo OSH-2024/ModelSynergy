@@ -6,7 +6,7 @@ extern void se_msg(char *msg, unsigned msg_prio);
 extern void re_msg(char *msg);
 
 int main() {
-    mq_create();
+    // mq_create();
     char *msg = "hello";
     char *remsg = (char*)malloc(sizeof(char)*4096);
     se_msg(msg, 0);

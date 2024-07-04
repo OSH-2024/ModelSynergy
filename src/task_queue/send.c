@@ -17,7 +17,7 @@ void se_msg(char *msg, unsigned msg_prio) {
     // 打开消息队列
     mq = mq_open(queue_name, O_WRONLY);
     if (mq == (mqd_t) -1) {
-        perror("mq_open");
+        perror("mq_open_se");
         exit(1);
     }
 
