@@ -1,6 +1,6 @@
 # 将src/auto_modify/watch 与 src/auto_modify/trans 移动到/usr/local/bin/下
-sudo mv src/auto_modify/watch /usr/local/bin/
-sudo mv src/auto_modify/trans /usr/local/bin/
+sudo cp src/auto_modify/watch /usr/local/bin/
+sudo cp src/auto_modify/trans /usr/local/bin/
 
 # 增加脚本运行权限
 chmod +x src/auto_modify/kill_watch.sh
