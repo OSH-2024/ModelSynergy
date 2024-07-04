@@ -32,8 +32,10 @@ void mq_create() {
     attr.mq_msgsize = MAX_MSG_SIZE;
     attr.mq_curmsgs = 0; // 当前消息队列中的消息数，有系统维护，当前设置为0
 
-    // 创建消息队列并以只读模式打开
-    mq = mq_open(QUEUE_NAME, O_CREAT | O_RDONLY, 0644, &attr);
+    // 创建消息队列并以读写模式打开
+    mode_t old_umask = umask(0);
+    mq = mq_open(QUEUE_NAME, O_CREAT | O_RDWR, 0666, &attr);
+    umask(old_umask);
     if (mq == (mqd_t) -1) {
         perror("mq_create");
         exit(1);
