@@ -7,12 +7,13 @@
 #include <dirent.h> // 目录操作
 #include <glib.h> // 哈希表
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/inotify.h>
 
-#define EVENT_SIZE  (sizeof(struct inotify_event))  // inotify事件结构体大小
-#define BUF_LEN     (1024 * (EVENT_SIZE + 16))      // inotify事件缓冲区大小
-#define MAX_PATH_LENGTH 4096                        // 最大路径长度
-#define ROOT_PATH   "/home/qsqsdac/test"            // 监控的根目录
+#define EVENT_SIZE  (sizeof(struct inotify_event))
+#define BUF_LEN     (4096 * (EVENT_SIZE + 16))
+#define MAX_PATH_LENGTH 4096
+
 // 进程运行时新创建的目录下文件无法监控，重新运行程序即可监控
 
 GHashTable *wd_to_path; // 哈希表，监视描述符到目录路径的映射
@@ -52,7 +53,19 @@ void handle_exit(int sig) {
 }
 
 int main(int argc, char **argv) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <dir>\n", argv[0]);
+        exit(1);
+    }
+
     signal(SIGINT, handle_exit);
+
+    struct stat path_stat;
+    stat(argv[1], &path_stat);
+    if (!S_ISDIR(path_stat.st_mode)) {
+        fprintf(stderr, "%s is not a directory\n", argv[1]);
+        exit(EXIT_FAILURE);
+    }
 
     int length, i = 0;
     int fd;
@@ -66,7 +79,7 @@ int main(int argc, char **argv) {
     }
 
     wd_to_path = g_hash_table_new(g_direct_hash, g_direct_equal); // 创建哈希表
-    add_watch_recursively(fd, ROOT_PATH);
+    add_watch_recursively(fd, argv[1]);
 
     while (1) {
         i = 0;

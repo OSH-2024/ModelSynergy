@@ -26,6 +26,13 @@ def store_command(file_path, kv_cache_path):
     # print("STDOUT:", result.stdout)
     # print("STDERR:", result.stderr)
 
+
+def watch_command(dir_path):
+    command = f"./watch {dir_path} &"
+    os.system(command)
+    print("watch added")
+
+
 def load_command(file_path):
     has_attr, kvcache_path = get_xattr(file_path, 'user.kvcache')
     if not has_attr:
@@ -35,18 +42,6 @@ def load_command(file_path):
 
     os.system(command)
     print("chat finished")
-
-
-def process_directory(directory, kv_cache_path):
-    for entry in os.scandir(directory):
-        if entry.is_file():
-            mime_type, _ = mimetypes.guess_type(entry.path)
-            if mime_type and mime_type.startswith('text/'):
-                store_command(entry.path, kv_cache_path)
-            else:
-                print(f"Warning: The file '{entry.path}' is not a text file and will be skipped.")
-        elif entry.is_dir():
-            process_directory(entry.path, kv_cache_path)
 
 def main():
     if sys.argv[1] == "--store" or sys.argv[1] == "-s":
@@ -63,8 +58,8 @@ def main():
                 store_command(file_path, kv_cache_path)
             else:
                 print(f"Error: The file '{file_path}' is not a text file.")
-        elif os.path.isdir(file_path):
-            process_directory(file_path, kv_cache_path)
+        else:
+            print(f"Error: The file '{file_path}' does not exist.")
     elif sys.argv[1] == "--load" or sys.argv[1] == "-l":
         if len(sys.argv) != 3:
             print("Usage: ModelSynergy --load <file-path>")
@@ -80,3 +75,14 @@ def main():
                 print(f"Error: The file '{file_path}' is not a text file.")
         elif os.path.isdir(file_path):
             print(f"Error: The file '{file_path}' is a directory.")
+    elif sys.argv[1] == "--watch" or sys.argv[1] == "-w":
+        if len(sys.argv) != 3:
+            print("Usage: ModelSynergy --watch <dir-path>")
+            sys.exit(1)
+        
+        dir_path = sys.argv[2]
+
+        if os.path.isdir(dir_path):
+            watch_command(dir_path)
+        else:
+            print(f"Error: The directory '{dir_path}' does not exist.")
