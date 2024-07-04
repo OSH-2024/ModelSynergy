@@ -86,3 +86,9 @@ def main():
             watch_command(dir_path)
         else:
             print(f"Error: The directory '{dir_path}' does not exist.")
+
+    elif sys.argv[1] == "--free" or sys.argv[1] == "-f":
+        os.system("./kill_watch.sh watch")
+        print("watch removed")
+        os.system("./kill_watch.sh trans")
+        print("trans removed")
