@@ -24,3 +24,5 @@ src/auto_modify/te
 .vscode/
 LC_OI_test/
 OI_control_context/
+test/
+kvcache
