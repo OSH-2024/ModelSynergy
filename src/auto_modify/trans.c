@@ -18,7 +18,7 @@ int main() {
 
         // 使用sprintf构建命令字符串
         sprintf(command, "python -m inf_llm.gen --model-path " \
-        "Qwen/Qwen1.5-0.5B-Chat --inf-llm-config-path config/qwen0b5-inf-llm.yaml " \
+        "Qwen/Qwen1.5-0.5B-Chat --inf-llm-config-path /home/aistudio/InfLLM/config/qwen-inf-llm.yaml " \
         "--prompt-file %s --store-kv-cache-file %s", file_path, kv_cache_path);
 
         //执行命令
