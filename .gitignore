@@ -26,3 +26,5 @@ LC_OI_test/
 OI_control_context/
 test/
 kvcache
+**/test/** */
+**/MiniCPM*/**  */
