@@ -5,7 +5,8 @@ from accelerate import init_empty_weights, infer_auto_device_map, load_checkpoin
 import os
 from tqdm import tqdm
 import argparse
-
+import transformers
+transformers.logging.set_verbosity(transformers.logging.CRITICAL)
 parser = argparse.ArgumentParser()
 parser.add_argument(
         "--folder",

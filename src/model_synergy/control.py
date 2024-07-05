@@ -25,7 +25,7 @@ def store_command(file_path, kv_cache_path):
 
     # 打印命令的输出
     print("STDOUT:", result.stdout)
-    print("STDERR:", result.stderr)
+    # print("STDERR:", result.stderr)
 
 
 def watch_command(dir_path):
