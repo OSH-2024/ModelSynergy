@@ -25,7 +25,6 @@ void se_msg(char *msg, unsigned msg_prio) {
     if (mq_send(mq, msg, strlen(msg), msg_prio) == -1) {
         perror("mq_send");
     }
-
     // 关闭消息队列
     mq_close(mq);
 }
