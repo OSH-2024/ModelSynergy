@@ -30,4 +30,5 @@ kvcache
 # src/model_synergy/op_gen.py
 # src/model_synergy/oi.py
 broswer/test/** */
-**/MiniCPM*/**  */
+broswer/MiniCPM-Llama3-V-2_5/
+book
