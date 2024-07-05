@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import mimetypes
+import site
 from .set import set_xattr
 from .get import get_xattr
 
@@ -49,7 +50,7 @@ def load_command(file_path):
 def main():
     if sys.argv[1] == "--store" or sys.argv[1] == "-s":
         if len(sys.argv) != 4:
-            print("Usage: ModelSynergy --store <file-path> <kv-cache-path>")
+            print("Usage: modelsynergy --store <file-path> <kv-cache-path>")
             sys.exit(1)
         
         file_path = sys.argv[2]
@@ -66,7 +67,7 @@ def main():
             
     elif sys.argv[1] == "--load" or sys.argv[1] == "-l":
         if len(sys.argv) != 3:
-            print("Usage: ModelSynergy --load <file-path>")
+            print("Usage: modelsynergy --load <file-path>")
             sys.exit(1)
         
         file_path = sys.argv[2]
@@ -82,7 +83,7 @@ def main():
 
     elif sys.argv[1] == "--watch" or sys.argv[1] == "-w":
         if len(sys.argv) != 3:
-            print("Usage: ModelSynergy --watch <dir-path>")
+            print("Usage: modelsynergy --watch <dir-path>")
             sys.exit(1)
         
         dir_path = sys.argv[2]
