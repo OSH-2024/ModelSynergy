@@ -26,5 +26,7 @@ LC_OI_test/
 OI_control_context/
 test/
 kvcache
-**/test/** */
+# src/model_synergy/op_gen.py
+# src/model_synergy/oi.py
+broswer/test/** */
 **/MiniCPM*/**  */

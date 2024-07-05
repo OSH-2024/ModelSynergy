@@ -39,6 +39,7 @@ void add_watch_recursively(int fd, const char *dir_name) {
             }
             char path[MAX_PATH_LENGTH];
             snprintf(path, sizeof(path), "%s/%s", dir_name, entry->d_name); // 拼接目录路径
+            printf("Adding watch on %s\n", path);
             add_watch_recursively(fd, path);
         }
     }
