@@ -15,6 +15,7 @@ src/xattr/__pycache__/
 src/xattr.egg-info/
 lab4/.vscode
 src/task_queue/test_sys.c
+src/task_queue/test
 src/task_queue/test.py
 src/auto_modify/testbg.py
 src/xattr/test.py

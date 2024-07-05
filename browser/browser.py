@@ -15,7 +15,7 @@ parser.add_argument(
         help="folder path",
     )
 parser.add_argument(
-        "--descirbe",
+        "--describe",
         "-d",
         type=str,
         default="None",
